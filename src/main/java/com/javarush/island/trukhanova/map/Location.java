@@ -34,7 +34,7 @@ public class Location {
         if (set == null) {
             return Collections.emptySet();
         }
-        // Небезопасное приведение типов (необходимо для совместимости с IEntity)
+
         return (Set<T>) set.stream().collect(Collectors.toSet());
     }
 
