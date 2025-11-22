@@ -18,7 +18,7 @@ public class Island implements IWorld {
     private final int width;
     private final int height;
     private final ISettings settings;
-    private int tickCounter = 0; // Для статистики
+    private int tickCounter = 0;
 
     public Island(ISettings settings) {
         this.settings = settings;
@@ -44,42 +44,52 @@ public class Island implements IWorld {
     @Override
     public void initializePopulation(ISettings settings) {
 
-        // Список всех конкретных классов сущностей
         List<Class<? extends AEntity>> entityTypes = List.of(
                 Wolf.class, Boa.class, Fox.class, Bear.class, Eagle.class,
                 Horse.class, Deer.class, Rabbit.class, Mouse.class, Goat.class,
                 Sheep.class, Boar.class, Buffalo.class, Duck.class, Caterpillar.class,
                 Plant.class
         );
-        int totalCells = width * height;
 
 
-        entityTypes.parallelStream().forEach(type -> {
+        for (Class<? extends AEntity> type : entityTypes) {
 
             int maxPerLocation = settings.getSpecs(type).maxPerLocation;
-            int initialCount = (int) (totalCells * settings.getStartPopulationPercent() / 100.0);
+            int initialCount = settings.getSpecs(type).getInitialCount();
 
             for (int k = 0; k < initialCount; k++) {
 
                 int r = ThreadLocalRandom.current().nextInt(height);
                 int c = ThreadLocalRandom.current().nextInt(width);
+                Location location = grid[r][c];
 
 
-                if (grid[r][c].getEntityCount(type) < maxPerLocation) {
+                if (location.getEntityCount(type) < maxPerLocation) {
                     try {
-
                         AEntity newEntity = type
                                 .getDeclaredConstructor(int.class, int.class, ISettings.class)
                                 .newInstance(r, c, settings);
 
-
-                        grid[r][c].addEntity(newEntity);
+                        location.addEntity(newEntity);
                     } catch (Exception e) {
                         System.err.println("Ошибка инициализации сущности " + type.getSimpleName() + ": " + e.getMessage());
                     }
                 }
             }
-        });
+        }
+    }
+
+    @Override
+    public void cleanDeadEntities() {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                Location loc = grid[i][j];
+
+                loc.getAllEntities().stream()
+                        .filter(e -> !e.isAlive())
+                        .forEach(loc::removeEntity);
+            }
+        }
     }
 
     @Override
@@ -91,18 +101,5 @@ public class Island implements IWorld {
             }
         }
         return all.stream().filter(IEntity::isAlive).collect(Collectors.toList());
-    }
-
-    @Override
-    public void cleanDeadEntities() {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                Location loc = grid[i][j];
-                // Используем стрим для фильтрации и удаления мертвых сущностей
-                loc.getAllEntities().stream()
-                        .filter(e -> !e.isAlive())
-                        .forEach(loc::removeEntity);
-            }
-        }
     }
 }
