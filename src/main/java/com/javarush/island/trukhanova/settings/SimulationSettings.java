@@ -8,8 +8,8 @@ import java.util.*;
 
 public class SimulationSettings implements ISettings {
 
-    private static final int ISLAND_WIDTH = 100;
-    private static final int ISLAND_HEIGHT = 20;
+    private static final int ISLAND_WIDTH = 20;
+    private static final int ISLAND_HEIGHT = 100;
     private static final long TICK_DELAY_MS = 500;
     private static final int START_POPULATION_PERCENT = 5;
     private static final int MAX_TICKS = 1000;
@@ -32,34 +32,34 @@ public class SimulationSettings implements ISettings {
     private Map<Class<?>, Map<Class<?>, Integer>> killChances;
 
     private void loadAnimalCharacteristics() {
+        // Вес, Скорость, Насыщение, Макс_на_локации, Символ, Размножение, НАЧАЛЬНОЕ_КОЛИЧЕСТВО
 
         // Хищники
-        characteristics.put(Wolf.class, new EntitySpecs(50.0, 3, 8.0, 30, "\uD83D\uDC3A", 3));
-        characteristics.put(Boa.class, new EntitySpecs(15.0, 1, 3.0, 30, "\uD83D\uDC0D", 4));
-        characteristics.put(Fox.class, new EntitySpecs(8.0, 2, 2.0, 30, "\uD83E\uDDA8", 3));
-        characteristics.put(Bear.class, new EntitySpecs(500.0, 2, 80.0, 5, "\uD83D\uDC3B", 2));
-        characteristics.put(Eagle.class, new EntitySpecs(6.0, 3, 1.0, 20, "\uD83E\uDD85", 2));
+        characteristics.put(Wolf.class, new EntitySpecs(50.0, 3, 8.0, 30, "\uD83D\uDC3A", 3, 20));
+        characteristics.put(Boa.class, new EntitySpecs(15.0, 1, 3.0, 30, "\uD83D\uDC0D", 4, 15));
+        characteristics.put(Fox.class, new EntitySpecs(8.0, 2, 2.0, 30, "\uD83E\uDDA8", 3, 25));
+        characteristics.put(Bear.class, new EntitySpecs(500.0, 2, 80.0, 5, "\uD83D\uDC3B", 2, 10));
+        characteristics.put(Eagle.class, new EntitySpecs(6.0, 3, 1.0, 20, "\uD83E\uDD85", 2, 43));
 
         // Травоядные и Всеядные
-        characteristics.put(Horse.class, new EntitySpecs(400.0, 4, 60.0, 20, "\uD83D\uDC0E", 4));
-        characteristics.put(Deer.class, new EntitySpecs(300.0, 4, 50.0, 20, "\uD83E\uDD8C", 4));
-        characteristics.put(Rabbit.class, new EntitySpecs(2.0, 2, 0.45, 150, "\uD83D\uDC07", 5));
-        characteristics.put(Mouse.class, new EntitySpecs(0.05, 1, 0.01, 500, "\uD83D\uDC01", 10));
-        characteristics.put(Goat.class, new EntitySpecs(60.0, 3, 10.0, 140, "\uD83D\uDC10", 3));
-        characteristics.put(Sheep.class, new EntitySpecs(70.0, 3, 15.0, 140, "\uD83D\uDC11", 3));
-        characteristics.put(Boar.class, new EntitySpecs(400.0, 2, 50.0, 50, "\uD83D\uDC17", 4));
-        characteristics.put(Buffalo.class, new EntitySpecs(700.0, 3, 100.0, 10, "\uD83D\uDC03", 3));
-        characteristics.put(Duck.class, new EntitySpecs(1.0, 4, 0.15, 200, "\uD83E\uDDA2", 6));
-        characteristics.put(Caterpillar.class, new EntitySpecs(0.01, 0, 0.0, 1000, "\uD83D\uDC1B", 15));
+        characteristics.put(Horse.class, new EntitySpecs(400.0, 4, 60.0, 20, "\uD83D\uDC0E", 7, 65));
+        characteristics.put(Deer.class, new EntitySpecs(300.0, 4, 50.0, 20, "\uD83E\uDD8C", 4, 35));
+        characteristics.put(Rabbit.class, new EntitySpecs(2.0, 2, 0.45, 150, "\uD83D\uDC07", 9, 100));
+        characteristics.put(Mouse.class, new EntitySpecs(0.05, 1, 0.01, 500, "\uD83D\uDC01", 10, 200));
+        characteristics.put(Goat.class, new EntitySpecs(60.0, 3, 10.0, 140, "\uD83D\uDC10", 3, 50));
+        characteristics.put(Sheep.class, new EntitySpecs(70.0, 3, 15.0, 140, "\uD83D\uDC11", 3, 60));
+        characteristics.put(Boar.class, new EntitySpecs(400.0, 2, 50.0, 50, "\uD83D\uDC17", 4, 40));
+        characteristics.put(Buffalo.class, new EntitySpecs(700.0, 3, 100.0, 10, "\uD83D\uDC03", 3, 15));
+        characteristics.put(Duck.class, new EntitySpecs(1.0, 4, 0.15, 200, "\uD83E\uDDA2", 6, 70));
+        characteristics.put(Caterpillar.class, new EntitySpecs(0.01, 0, 0.0, 1000, "\uD83D\uDC1B", 15, 300));
 
         // Растение
-        characteristics.put(Plant.class, new EntitySpecs(1.0, 0, 0.0, 200, "\uD83C\uDF31", 0));
+        characteristics.put(Plant.class, new EntitySpecs(1.0, 0, 0.0, 200, "\uD83C\uDF31", 0, 100));
     }
 
     private void loadKillChances() {
         killChances = new HashMap<>();
 
-        // --- Вероятности Хищников ---
         Map<Class<?>, Integer> wolfChances = new HashMap<>();
         wolfChances.put(Horse.class, 10); wolfChances.put(Deer.class, 15); wolfChances.put(Rabbit.class, 60);
         wolfChances.put(Mouse.class, 80); wolfChances.put(Goat.class, 60); wolfChances.put(Sheep.class, 70);
@@ -85,7 +85,7 @@ public class SimulationSettings implements ISettings {
         eagleChances.put(Rabbit.class, 90); eagleChances.put(Mouse.class, 90); eagleChances.put(Duck.class, 80);
         killChances.put(Eagle.class, eagleChances);
 
-        // --- Вероятности Травоядных ---
+
         List<Class<?>> strictHerbivores = List.of(Horse.class, Deer.class, Rabbit.class, Mouse.class, Goat.class, Sheep.class, Buffalo.class, Caterpillar.class);
         for (Class<?> herbivore : strictHerbivores) {
             killChances.computeIfAbsent(herbivore, k -> new HashMap<>()).put(Plant.class, 100);
@@ -140,4 +140,3 @@ public class SimulationSettings implements ISettings {
         return ENERGY_CONSUMPTION_PER_TURN;
     }
 }
-

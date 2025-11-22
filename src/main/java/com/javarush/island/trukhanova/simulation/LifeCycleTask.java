@@ -4,15 +4,20 @@ import com.javarush.island.trukhanova.contracts.IEntity;
 import com.javarush.island.trukhanova.contracts.IWorld;
 import java.util.concurrent.CountDownLatch;
 
+
+
 public class LifeCycleTask implements Runnable {
 
     private final IEntity entity;
     private final IWorld world;
-    private final CountDownLatch latch;
+    private CountDownLatch latch;
 
-    public LifeCycleTask(IEntity entity, IWorld world, CountDownLatch latch) {
+    public LifeCycleTask(IEntity entity, IWorld world) {
         this.entity = entity;
         this.world = world;
+    }
+
+    public void setLatch(CountDownLatch latch) {
         this.latch = latch;
     }
 
@@ -23,8 +28,9 @@ public class LifeCycleTask implements Runnable {
                 entity.runLifeCycle(world);
             }
         } finally {
-            latch.countDown();
+            if (latch != null) {
+                latch.countDown();
+            }
         }
     }
 }
-
